@@ -43,8 +43,16 @@ async function run() {
     })
     app.get('/jobSearch', async(req, res)=>{
       const {searchParams} = req.query;
-      let option={}
-       option={company: {$regex: searchParams,$options:"i"}};
+      // let option={}
+      //  option={company: {$regex: searchParams,$options:"i"},
+      //  title: {$regex: searchParams,$options:"i"}
+      // };
+      const option = {
+        $or: [
+            { company: { $regex: searchParams, $options: "i" } },
+            { title: { $regex: searchParams, $options: "i" } },
+        ],
+    };
       
         const cursor = jobsCollections.find(option);
         const result = await cursor.toArray();
