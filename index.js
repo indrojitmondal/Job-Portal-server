@@ -41,6 +41,15 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
     })
+    app.get('/jobSearch', async(req, res)=>{
+      const {searchParams} = req.query;
+      let option={}
+       option={company: {$regex: searchParams,$options:"i"}};
+      
+        const cursor = jobsCollections.find(option);
+        const result = await cursor.toArray();
+        res.send(result);
+    })
     app.post('/jobs', async(req,res)=>{
       
        const newJob= req.body;
@@ -73,15 +82,11 @@ async function run() {
     })
     app.get('/job-application', async(req, res)=>{
       const email = req.query.email;
-      let query = {applicant_email: email
+      const query = {applicant_email: email
         
       };
-      const searchParams=req.query.searchParams;
-      if(searchParams) {
-      query={applicant_email: email,
-        title: {$regex: searchParams,$options: "i" }
-      };
-    }
+     
+      
       const result = await jobApplicationCollections.find(query).toArray();
       for (const application of result) {
          const query1 = {_id: new ObjectId(application.job_id)};
@@ -94,6 +99,7 @@ async function run() {
           application.company_logo = job.company_logo;
          }
       }
+      
       res.send(result);
     })
    
