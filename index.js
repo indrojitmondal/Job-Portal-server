@@ -73,7 +73,15 @@ async function run() {
     })
     app.get('/job-application', async(req, res)=>{
       const email = req.query.email;
-      const query = {applicant_email: email};
+      let query = {applicant_email: email
+        
+      };
+      const searchParams=req.query.searchParams;
+      if(searchParams) {
+      query={applicant_email: email,
+        title: {$regex: searchParams,$options: "i" }
+      };
+    }
       const result = await jobApplicationCollections.find(query).toArray();
       for (const application of result) {
          const query1 = {_id: new ObjectId(application.job_id)};
